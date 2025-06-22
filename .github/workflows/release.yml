@@ -17,15 +17,24 @@ jobs:
         id: version
         run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
-      - name: Create versioned ZIP with files in root
+      - name: Create plugin folder structure
         run: |
-          mkdir -p build
+          mkdir -p build/fardar-tracking-bitlab
           shopt -s dotglob
-          zip -r build/fardar-tracking-bitlab-${VERSION}.zip * -x "build/*" ".git/*" ".github/*"
+          for item in *; do
+            if [[ "$item" != "build" && "$item" != ".git" && "$item" != ".github" ]]; then
+              cp -r "$item" build/fardar-tracking-bitlab/
+            fi
+          done
+
+      - name: Create versioned ZIP
+        run: |
+          cd build
+          zip -r ../fardar-tracking-bitlab-${VERSION}.zip fardar-tracking-bitlab
 
       - name: Upload release asset
         uses: softprops/action-gh-release@v2
         with:
-          files: build/fardar-tracking-bitlab-${{ env.VERSION }}.zip
+          files: fardar-tracking-bitlab-${{ env.VERSION }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
