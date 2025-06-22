@@ -15,17 +15,31 @@ jobs:
 
       - name: Set version from tag
         id: version
-        run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+        run: |
+          RAW_TAG="${GITHUB_REF##*/}"
+          CLEAN_VERSION="${RAW_TAG#v}"  # remove leading "v"
+          echo "VERSION=${CLEAN_VERSION}" >> $GITHUB_ENV
+
+      - name: Update version in PHP plugin header
+        run: |
+          FILE="fardar-tracking-bitlab.php"
+          sed -i -E "s/(\* Version: )([0-9\.]+)/\1${VERSION}/" "$FILE"
 
       - name: Create plugin folder structure
         run: |
           mkdir -p build/fardar-tracking-bitlab
           shopt -s dotglob
           for item in *; do
-            if [[ "$item" != "build" && "$item" != ".git" && "$item" != ".github" ]]; then
+            if [[ "$item" != "build" ]]; then
               cp -r "$item" build/fardar-tracking-bitlab/
             fi
           done
+
+          # Remove unwanted dot folders
+          rm -rf build/fardar-tracking-bitlab/.git
+          rm -rf build/fardar-tracking-bitlab/.github
+          rm -rf build/fardar-tracking-bitlab/.vscode
+          rm -rf build/fardar-tracking-bitlab/.DS_Store
 
       - name: Create versioned ZIP
         run: |
