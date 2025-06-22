@@ -6,29 +6,31 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         
         const $form = $(this);
-        const $button = $('#bitlab-track-button');
-        const $buttonText = $button.find('.button-text');
-        const $spinner = $button.find('.spinner-border');
-        const $result = $('#bitlab-tracking-result');
-        const trackingNumber = $('#bitlab-tracking-number').val().trim();
+        const $submitBtn = $form.find('button[type="submit"]');
+        const $buttonText = $submitBtn.find('.track-button-text');
+        const $buttonLoading = $submitBtn.find('.track-button-loading');
+        const $result = $('#tracking-result');
         
-        // Validate tracking number
+        // Get tracking number
+        const trackingNumber = $('#tracking-number').val().trim();
+        
+        // Basic validation
         if (!trackingNumber) {
-            showError('Please enter a tracking number.');
+            showError(bitlab_ajax.strings.invalid_tracking);
             return;
         }
         
-        // Validate format (alphanumeric only)
-        if (!/^[A-Za-z0-9]+$/.test(trackingNumber)) {
-            showError('Please enter a valid tracking number (letters and numbers only).');
+        // Validate format (alphanumeric, 3-20 characters)
+        if (!/^[A-Za-z0-9]{3,20}$/.test(trackingNumber)) {
+            showError(bitlab_ajax.strings.invalid_tracking);
             return;
         }
         
         // Show loading state
-        $button.prop('disabled', true);
+        $submitBtn.prop('disabled', true);
         $buttonText.addClass('d-none');
-        $spinner.removeClass('d-none');
-        $result.hide();
+        $buttonLoading.removeClass('d-none');
+        $result.html('');
         
         // Make AJAX request
         $.ajax({
@@ -49,91 +51,51 @@ jQuery(document).ready(function($) {
             },
             error: function(xhr, status, error) {
                 console.error('Tracking request failed:', error);
-                if (status === 'timeout') {
-                    showError('Request timed out. Please try again.');
-                } else {
-                    showError(bitlab_ajax.strings.tracking_error);
-                }
+                showError(bitlab_ajax.strings.tracking_error);
             },
             complete: function() {
                 // Reset button state
-                $button.prop('disabled', false);
+                $submitBtn.prop('disabled', false);
                 $buttonText.removeClass('d-none');
-                $spinner.addClass('d-none');
+                $buttonLoading.addClass('d-none');
             }
         });
     });
+    
+    // Show error message
+    function showError(message) {
+        $('#tracking-result').html(
+            '<div class="alert alert-danger" role="alert">' +
+            '<i class="fas fa-exclamation-triangle"></i> ' +
+            escapeHtml(message) +
+            '</div>'
+        );
+    }
+    
+    // Show success message
+    function showSuccess(content) {
+        $('#tracking-result').html(content);
+    }
+    
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
     
     // Handle direct URL tracking
     const urlParams = new URLSearchParams(window.location.search);
     const trackingNo = urlParams.get('trackingno');
     
     if (trackingNo) {
-        // Pre-fill the tracking number
-        $('#bitlab-tracking-number').val(trackingNo);
-        
-        // Automatically submit the form
-        setTimeout(function() {
-            $('#bitlab-tracking-form').submit();
-        }, 500);
+        // Populate the form and submit
+        $('#tracking-number').val(trackingNo);
+        $('#bitlab-tracking-form').submit();
     }
-    
-    // Show error message
-    function showError(message) {
-        const $result = $('#bitlab-tracking-result');
-        $result.html(`
-            <div class="alert alert-danger" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                ${escapeHtml(message)}
-            </div>
-        `).show();
-        
-        // Scroll to result
-        $result[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-    
-    // Show success message
-    function showSuccess(content) {
-        const $result = $('#bitlab-tracking-result');
-        $result.html(`
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="bi bi-truck me-2"></i>
-                        Tracking Information
-                    </h5>
-                </div>
-                <div class="card-body">
-                    ${content}
-                </div>
-            </div>
-        `).show();
-        
-        // Scroll to result
-        $result[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-    
-    // Escape HTML to prevent XSS
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-    
-    // Add input validation
-    $('#bitlab-tracking-number').on('input', function() {
-        const value = $(this).val();
-        const isValid = /^[A-Za-z0-9]*$/.test(value);
-        
-        if (value && !isValid) {
-            $(this).addClass('is-invalid');
-        } else {
-            $(this).removeClass('is-invalid');
-        }
-    });
-    
-    // Clear validation on focus
-    $('#bitlab-tracking-number').on('focus', function() {
-        $(this).removeClass('is-invalid');
-    });
 }); 

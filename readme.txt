@@ -1,7 +1,7 @@
 === Fardar Tracking by BitLab for WooCommerce ===
 Contributors: bitlablk
 Donate link: https://bitlab.lk/
-Tags: tracking, wooCommerce, shipment, courier, fde, secure, ajax
+Tags: tracking, wooCommerce, shipment, courier, fde, ajax, security
 Requires at least: 5.0
 Tested up to: 6.8
 Stable tag: 2.0.0
@@ -9,35 +9,48 @@ Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Enable FDE Domestic courier tracking via shortcode or direct URL with enhanced security. Integrates with WooCommerce Shipment Tracking plugin.
+Secure FDE Domestic courier tracking via AJAX shortcode and direct URL. Integrates with WooCommerce Shipment Tracking plugin with enhanced security features.
 
 == Description ==
 
-**Fardar Tracking by BitLab for WooCommerce** is a secure WordPress plugin that enables shipment tracking using the FDE Domestic courier service. Built with security-first approach, it provides a clean, user-friendly interface for customers to track their shipments directly on your website.
+**Fardar Tracking by BitLab for WooCommerce** provides secure, AJAX-powered shipment tracking using the FDE Domestic courier service. This plugin offers a clean, user-friendly interface for customers to track their shipments directly on your WordPress website with enterprise-level security measures.
 
-**Key Security Features:**
-* Input validation and sanitization
-* Rate limiting to prevent abuse
-* Content sanitization for external responses
-* Nonce verification for all requests
-* XSS protection
-* SQL injection prevention
+= Key Features =
 
-**Features:**
-* Fetches live tracking status from https://www.fdedomestic.com/track.php
-* AJAX-powered tracking with real-time updates
-* Clean Bootstrap-based frontend UI
-* Admin settings to choose a tracking page
-* Compatible with WooCommerce Shipment Tracking extension
-* Shortcode support with customizable attributes
-* Direct URL tracking support
-* GPL licensed and follows WordPress.org plugin standards
+* **AJAX-Powered Tracking**: Fast, responsive tracking without page reloads
+* **Enhanced Security**: Rate limiting, input validation, and XSS protection
+* **WooCommerce Integration**: Seamless integration with WooCommerce Shipment Tracking
+* **Bootstrap UI**: Modern, responsive design using Bootstrap 5.3.3
+* **Direct URL Support**: Share tracking links directly with customers
+* **Admin Settings**: Easy configuration through WordPress admin panel
+* **GPL Licensed**: Open source and follows WordPress.org standards
 
-**Shortcode Usage:**
-`[bitlab_fardar_tracking]`
+= Security Features =
 
-**Custom Attributes:**
-`[bitlab_fardar_tracking title="Custom Title" placeholder="Custom Placeholder" button_text="Custom Button"]`
+* Rate limiting (10 requests per minute per IP)
+* Strict input validation and sanitization
+* Nonce verification for all AJAX requests
+* Secure external API handling with timeout protection
+* Content sanitization and XSS protection
+* Proper escaping of all outputs
+
+= How It Works =
+
+The plugin fetches live tracking data from the official FDE Domestic tracking service (https://www.fdedomestic.com/track.php) and displays it securely on your website. All requests are validated, rate-limited, and sanitized to prevent security vulnerabilities.
+
+= Requirements =
+
+* WordPress 5.0 or higher
+* PHP 7.4 or higher
+* WooCommerce 3.0+ (for WooCommerce integration)
+* WooCommerce Shipment Tracking plugin (optional, for enhanced integration)
+
+== Installation ==
+
+1. Upload the `fardar-tracking-bitlab` folder to your `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Go to **Settings > Fardar Tracking** to configure your tracking page
+4. Use the shortcode `[bitlab_fardar_tracking]` on any page to display the tracking form
 
 == Frequently Asked Questions ==
 
@@ -52,59 +65,58 @@ Go to *Settings > Fardar Tracking*, select a tracking page, and use the URL form
 
 = Does it integrate with WooCommerce Shipment Tracking? =
 
-Yes. It registers a provider called "Fardar" which WooCommerce Shipment Tracking will use.
+Yes. It automatically registers "Fardar" as a tracking provider which WooCommerce Shipment Tracking will use.
+
+= What security measures are in place? =
+
+The plugin implements multiple security layers:
+* Rate limiting to prevent abuse
+* Input validation and sanitization
+* Nonce verification for all requests
+* Secure external API handling
+* Content sanitization to prevent XSS attacks
 
 = Where does the tracking data come from? =
 
-It securely fetches HTML output from the official tracking site: https://www.fdedomestic.com/track.php with proper sanitization.
+It securely fetches data from the official FDE Domestic tracking service: https://www.fdedomestic.com/track.php
 
-= What security measures are implemented? =
+= What happens if the tracking service is down? =
 
-* Input validation and sanitization
-* Rate limiting (5 requests per minute per IP)
-* Content sanitization for external responses
-* Nonce verification for all AJAX requests
-* XSS protection through wp_kses
-* SQL injection prevention
-
-= Is this plugin safe for production use? =
-
-Yes. Version 2.0.0 has been completely rewritten with security-first approach and follows WordPress coding standards.
+The plugin gracefully handles errors and displays appropriate messages to users without breaking your website.
 
 == Screenshots ==
 
-1. Admin settings page to configure tracking page and view security features.
-2. AJAX-powered tracking form with Bootstrap UI and real-time validation.
-3. Example of tracking results with sanitized content display.
-4. Rate limiting and security features demonstration.
+1. Admin settings page with security features documentation
+2. AJAX-powered tracking form with Bootstrap styling
+3. Example of tracking results display
+4. WooCommerce Shipment Tracking integration
 
 == Changelog ==
 
 = 2.0.0 =
-* Complete security rewrite addressing WordPress Plugin Directory concerns
-* AJAX-powered tracking for better user experience
+* Complete security overhaul with AJAX implementation
+* Rate limiting (10 requests per minute per IP)
 * Enhanced input validation and sanitization
-* Rate limiting to prevent abuse (5 requests per minute per IP)
-* Content sanitization for external responses
-* XSS protection through wp_kses
 * Nonce verification for all requests
+* Secure external API handling with timeout protection
+* Content sanitization and XSS protection
 * Improved error handling and user feedback
-* Updated to require WordPress 5.0+ and PHP 7.4+
-* Enhanced admin interface with security documentation
-* Custom shortcode attributes support
-* Better code organization and documentation
+* Bootstrap 5.3.3 integration
+* WordPress 5.0+ compatibility
+* PHP 7.4+ requirement for enhanced security
 
 = 1.1.1 =
 * WooCommerce Shipment Tracking integration
 * Bootstrap styling added to frontend form
 * Enhanced admin instructions and security
-* Stable release for WordPress.org submission
+* Dynamic tracking page URL based on admin selection
 
 = 1.1.0 =
 * Added WooCommerce Shipment Tracking integration
 * Dynamic tracking page URL based on admin selection
 * Improved admin instructions and security
 * Bootstrap styling added to frontend form
+* Stable release for WordPress.org submission
 
 = 1.0.0 =
 * Initial release with shortcode and tracking functionality
@@ -112,56 +124,10 @@ Yes. Version 2.0.0 has been completely rewritten with security-first approach an
 == Upgrade Notice ==
 
 = 2.0.0 =
-**Major Security Update**: Complete rewrite with enhanced security features. Requires WordPress 5.0+ and PHP 7.4+. Includes AJAX tracking, rate limiting, and comprehensive input sanitization.
+**Security Update Required**: This version includes major security improvements. Please update immediately.
 
 = 1.1.0 =
 Recommended update: Adds WooCommerce support and improved UI.
 
 = 1.0.0 =
-Initial release.
-
-== Security Features ==
-
-This plugin implements multiple security measures:
-
-1. **Input Validation**: All user inputs are validated and sanitized
-2. **Rate Limiting**: Prevents abuse with 5 requests per minute per IP
-3. **Content Sanitization**: External responses are thoroughly sanitized
-4. **Nonce Verification**: All AJAX requests require valid nonces
-5. **XSS Protection**: Uses wp_kses for safe HTML output
-6. **SQL Injection Prevention**: Proper data sanitization and validation
-
-== Installation ==
-
-1. Upload the plugin files to `/wp-content/plugins/fardar-tracking-bitlab/`
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Settings > Fardar Tracking to configure
-4. Use the shortcode `[bitlab_fardar_tracking]` on any page
-
-== A brief Markdown Example ==
-
-This plugin supports:
-
-1. WooCommerce integration
-2. Direct tracking links
-3. Shortcode-based tracking forms
-4. AJAX-powered tracking
-5. Enhanced security features
-
-Features:
-
-* Live FDE tracking with security
-* Easy admin setup
-* Fully GPL compatible
-* Rate limiting protection
-* Input validation
-
-> Built and maintained by **BitLab (Pvt) Ltd** - [bitlab.lk](https://bitlab.lk)
-
-`[bitlab_fardar_tracking]` to embed the form.
-
-== Support ==
-
-For support and questions:
-* Website: [bitlab.lk](https://bitlab.lk)
-* Documentation: Check the plugin's admin settings page 
+Initial release. 
