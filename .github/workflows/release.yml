@@ -1,0 +1,40 @@
+name: Build and Upload Versioned Plugin ZIP
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - name: Create plugin folder structure
+        run: |
+          mkdir -p build/fardar-tracking-bitlab
+          shopt -s dotglob
+          for item in *; do
+            if [[ "$item" != "build" && "$item" != ".git" && "$item" != ".github" ]]; then
+              cp -r "$item" build/fardar-tracking-bitlab/
+            fi
+          done
+
+      - name: Create versioned ZIP
+        run: |
+          cd build
+          zip -r ../fardar-tracking-bitlab-${VERSION}.zip fardar-tracking-bitlab
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: fardar-tracking-bitlab-${{ env.VERSION }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
